@@ -1,0 +1,6 @@
+"write your own keys in the appropriate place"
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_SECRET=
+MAPBOX_TOKEN=
+DB_URL=
