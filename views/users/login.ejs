@@ -1,7 +1,7 @@
 <% layout("layouts/boilerplate") %>
 
   <div class="container d-flex justify-content-center align-items-center mt-5">
-    <div class="row">
+    <div class="row" style="margin: auto">
       <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
         <div class="card shadow">
           <img
@@ -17,7 +17,6 @@
                   Looks good!
                 </div>
               </div>
-
               <div class="mb-3">
                 <label class="form-label" for="password">Password</label>
                 <input class="form-control" type="password" id="password" name="password" required>
@@ -25,7 +24,14 @@
                   Looks good!
                 </div>
               </div>
-              <button class="btn btn-success btn-block">Login</button>
+              <button class="btn btn-success btn-block w-100 mb-3">Login</button> 
+              <div class="mb-3">
+                <a href="/auth/google" class="d-flex justify-content-center align-items-center">
+                  <img
+                    src="https://res.cloudinary.com/reymir/image/upload/v1618490484/YelpCamp/btn_google_signin_light_normal_web_2x_osfyjo.png"
+                    alt="GOOGLE SIGN IN">
+                </a>
+              </div>
             </form>
           </div>
         </div>

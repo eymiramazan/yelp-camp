@@ -25,6 +25,10 @@ const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
 const secret = process.env.SECRET || "pickabettersecret!";
 const port = process.env.PORT || 3000;
 
+const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+
+const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-names-generator');
+
 //DATABASE CONNECTIONS
 mongoose.connect(dbUrl, {
   useNewUrlParser: true,
@@ -124,8 +128,42 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.use(new GoogleStrategy({
+  clientID : process.env.GOOGLE_API,
+  clientSecret : process.env.GOOGLE_API_SECRET,
+  callbackURL : "http://localhost:3000/auth/google/callback"
+  },
+  function(accessToken, refreshToken, profile,done){
+    User.findOne({email: profile.emails[0].value}).then((currentUser) => {
+      if(currentUser){
+        done(null,currentUser);
+      }
+      else{
+        try{
+          new User({
+            email: profile.emails[0].value,
+            username: uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals] })
+          }).save().then((newUser) => {
+            done(null,newUser)
+          });
+        }catch (err){
+          req.flash("error",err.message);
+          res.redirect("/login");
+        }
+      }
+    })
+  })
+);
+
+passport.serializeUser((user,done) => {
+  done(null,user.id);
+});
+
+passport.deserializeUser((id,done) => {
+  User.findById(id).then(user => {
+    done(null,user);
+  });
+});
 
 app.use((req, res, next) => {
   res.locals.currentUser = req.user;
