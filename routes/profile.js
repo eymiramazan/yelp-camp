@@ -16,4 +16,10 @@ router.route("/account/delete")
 router.route("/account/changeUsername")
   .post(isLoggedIn, catchAsync(users.changeUsername));
 
+router.route("/:author/campgrounds")
+  .get(catchAsync(users.userCampgrounds));
+
+router.route("/:author/reviews")
+  .get(catchAsync(users.userReviews));
+
 module.exports = router;

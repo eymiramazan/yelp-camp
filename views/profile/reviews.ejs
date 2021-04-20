@@ -1,0 +1,50 @@
+<% layout("layouts/boilerplate") %>
+<link rel="stylesheet" href="/stylesheets/stars.css">
+
+<% if(currentUser.username && currentUser.username == linkUser) {%>
+  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark justify-content-center">
+    <div class="collapse navbar-collapse d-flex justify-content-center" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link " href="/profile/account">Account Settings</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/profile/<%=currentUser.username%>/campgrounds">My Campgrounds</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/profile/<%=currentUser.username%>/reviews">My Reviews</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+<% } else{%>
+  <h2><%=linkUser%>'s Reviews</h2>
+<% } %> 
+<% if (reviews.length > 0) { %>
+  <% for(let [index,review] of reviews.entries()) {%>
+    <div class="card mb-3 mt-3">
+      <div class=row>
+        <div class="col-4 justify-content-center">
+          <img src="<%= campgrounds[index].images[0].url %> " class="cg-img" alt="">
+        </div>
+        <div class="col-8">
+          <div class="card-body">
+            <h5 class="card-title"><%= campgrounds[index].title %></h5>
+            <p class="starability-result" data-rating="<%=review.rating%>">
+              Rated: <%= review.rating %>  stars
+            </p>
+            <p class="card-text">Review: <%= review.body %></p>
+            <a class="btn btn-primary" href="/campgrounds/<%=campgrounds[index]._id%>">GO TO CAMPGROUND</a>
+          </div>
+      </div>
+    </div>
+  </div>
+  <% } %>
+<% } else { %>
+  <div class="text-center">
+    <h1><%= user[0].username %> has no campground</h1>
+    <a href="/campgrounds">Go to Campgrounds Page</a>
+  </div>
+<% } %> 

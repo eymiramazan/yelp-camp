@@ -1,0 +1,60 @@
+<% layout("layouts/boilerplate") %>
+  <% if(currentUser.username && currentUser.username == linkUser) {%>
+  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark justify-content-center">
+    <div class="collapse navbar-collapse d-flex justify-content-center" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link " href="/profile/account">Account Settings</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/profile/<%=currentUser.username%>/campgrounds">My Campgrounds</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/profile/<%=currentUser.username%>/reviews">My Reviews</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <% } else{%>
+    <h2><%=linkUser%>'s Campgrounds</h2>
+  <% } %> 
+
+  <% if (campgrounds.length > 0) { %>
+  <% for (let campground of campgrounds) { %>
+    <div class="card mb-3 mt-3">
+      <div class="row">
+        <div class="col-md-4">
+          <%if(campground.images.length){%>
+            <img class="cg-img" alt="" src="<%= campground.images[0].url %> ">
+            <% }else {%>
+              <img src=""
+                alt="https://res.cloudinary.com/reymir/image/upload/v1614974000/YelpCamp/wvaxmphacp0kayjlcghf.jpg">
+              <% } %>
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title" id="title">
+              <%= campground.title %>
+            </h5>
+            <p class="card-text">
+              <%= campground.description %>
+            </p>
+            <p class="card-text">
+              <small class="text-muted">
+                <%= campground.location %>
+              </small>
+            </p>
+            <a class="btn btn-primary" href="/campgrounds/<%= campground._id %> ">View <%= campground.title %> </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+  <% } else { %>
+    <div class="text-center">
+      <h1><%= user[0].username %> has no campground</h1>
+      <a href="/campgrounds">Go to Campgrounds Page</a>
+    </div>
+  <% } %> 

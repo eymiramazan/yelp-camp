@@ -28,7 +28,35 @@ module.exports.renderLogin = (req, res) => {
 }
 
 module.exports.renderAccountSettings = (req, res) => {
-  res.render("profile/account", { user: req.user })
+  res.render("profile/account", { user: req.user });
+}
+
+module.exports.userCampgrounds = async(req,res) => {
+  const linkUser = req.params.author
+  const user = await User.find({username: req.params.author});
+  const campgrounds = await Campground.find({author: user[0]._id});
+  return res.render("profile/campgrounds", { campgrounds, user, linkUser});
+}
+
+module.exports.userReviews = async(req,res) => {
+  const linkUser = req.params.author
+  const user = await User.find({username: req.params.author});
+  const reviews = await Review.find({author: user[0]._id});
+  const campgrounds = await Campground.find({});
+  const filteredCampgrounds = []
+  const filteredReviews = []
+  //fix this with more appropriate way
+  for(let i=0; i<campgrounds.length; i++){
+    for(let j=0; j<campgrounds[i].reviews.length; j++){
+      for(let k=0; k<reviews.length; k++){
+        if(String(campgrounds[i].reviews[j]) === String(reviews[k]._id)){
+          filteredCampgrounds.push(campgrounds[i]);
+          filteredReviews.push(reviews[k]);
+        }
+      }
+    }
+  }
+  return res.render("profile/reviews",{ reviews: filteredReviews, campgrounds: filteredCampgrounds, linkUser });
 }
 
 module.exports.changeMyPassword = async (req, res) => {
@@ -42,7 +70,7 @@ module.exports.changeMyPassword = async (req, res) => {
     await user.changePassword(oldPassword, newPassword, (err) => {
       if (err) {
         if (err.name === 'IncorrectPasswordError') {
-          req.flash("error",'Incorrect password'); // Return error
+          req.flash("error",'Incorrect password');
           return res.redirect("/profile/account"); 
         } else {
           req.flash("error","Smthing went wrong",err.message);
