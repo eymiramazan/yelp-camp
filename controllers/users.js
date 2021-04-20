@@ -28,7 +28,7 @@ module.exports.renderLogin = (req, res) => {
 }
 
 module.exports.renderAccountSettings = (req, res) => {
-  res.render("profile/account")
+  res.render("profile/account", { user: req.user })
 }
 
 module.exports.changeMyPassword = async (req, res) => {
@@ -39,7 +39,7 @@ module.exports.changeMyPassword = async (req, res) => {
       req.flash("error", "Cannot find user! Issue");
       return res.redirect("/profile/account");
     }
-    user.changePassword(oldPassword, newPassword, (err) => {
+    await user.changePassword(oldPassword, newPassword, (err) => {
       if (err) {
         if (err.name === 'IncorrectPasswordError') {
           req.flash("error",'Incorrect password'); // Return error
@@ -77,6 +77,31 @@ module.exports.deleteAccount = async (req,res) => {
   }catch(err){
     req.flash("error".err);
     res.redirect("/profile/account")
+  }
+}
+
+module.exports.changeUsername = async(req,res) => {
+  try {
+    const { newUsername } = req.body;
+    const checkIfUsernameExists = await User.find({username:newUsername});
+    if (checkIfUsernameExists){
+      req.flash("error", "Username already exists");
+      return res.redirect("/profile/account");
+    }
+
+    const user = await User.findById(req.user._id);
+    console.log("aaa"+user.username);
+    if(!user){
+      req.flash("error", "Cannot find user! Issue");
+      return res.redirect("/profile/account");
+    }
+    await User.updateOne({username: req.user.username}, {$set: {username: newUsername}});
+
+    req.flash("success","Successfully changed your username!");
+    return res.redirect("/profile/account");
+  }catch(err) {
+    req.flash("error", err.message);
+    res.redirect("/profile/account");
   }
 }
 

@@ -13,4 +13,7 @@ router.route("/account")
 router.route("/account/delete")
   .delete(isLoggedIn,catchAsync(users.deleteAccount));
 
+router.route("/account/changeUsername")
+  .post(isLoggedIn, catchAsync(users.changeUsername));
+
 module.exports = router;
