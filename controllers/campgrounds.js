@@ -5,7 +5,16 @@ const geocoder = mbxGeoCoding({ accessToken: mapBoxToken });
 const {cloudinary} = require("../cloudinary");
 
 module.exports.index = async (req, res) => {
-  const campgrounds = await Campground.find({});
+  const searchString = req.query.search;
+  let campgrounds = await Campground.find({});
+  if (searchString) {
+    const filtered = campgrounds.filter((el) => el.title.toLowerCase().includes(searchString.toLowerCase()));
+    if(filtered.length == 0) {
+      req.flash("error","Campground not found!")
+      res.redirect("/campgrounds");
+    }
+    campgrounds = filtered;
+  }
   res.render("campgrounds/index", { campgrounds });
 };
 
